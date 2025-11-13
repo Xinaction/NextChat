@@ -1,6 +1,6 @@
 {
-  "name": "NextChat",
-  "short_name": "NextChat",
+  "name": "MyAssistant",
+  "short_name": "MyAssistant",
   "icons": [
     {
       "src": "/android-chrome-192x192.png",
