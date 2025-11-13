@@ -239,6 +239,60 @@ export function Home() {
   useLoadData();
   useHtmlLang();
 
+  // 新增锁屏相关状态
+  const [isUnlocked, setIsUnlocked] = useState<boolean>(false);
+  const [passwordInput, setPasswordInput] = useState<string>("");
+
+  // 本地密码校验逻辑
+  useEffect(() => {
+    // 从 localStorage 查找密码
+    const localPwd = localStorage.getItem("unlock-pwd");
+    if (localPwd === "admin123") {
+      setIsUnlocked(true);
+    }
+  }, []);
+
+  // 锁屏页面
+  const LockScreen = (
+    <div
+      style={{
+        width: "100vw",
+        height: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        background: "#181818",
+        flexDirection: "column",
+      }}
+    >
+      <h2 style={{ color: "#fff", marginBottom: "20px" }}>请输入解锁密码</h2>
+      <input
+        autoFocus
+        type="password"
+        placeholder="Password"
+        value={passwordInput}
+        onChange={(e) => setPasswordInput(e.target.value)}
+        style={{
+          padding: "10px",
+          fontSize: "18px",
+          borderRadius: "5px",
+          border: "1px solid #888",
+        }}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            if (passwordInput === "admin123") {
+              // 密码正确，存储到 localStorage 并解锁
+              localStorage.setItem("unlock-pwd", "admin123");
+              setIsUnlocked(true);
+            } else {
+              alert("密码错误！");
+            }
+          }
+        }}
+      />
+    </div>
+  );
+
   useEffect(() => {
     console.log("[Config] got config from build time", getClientConfig());
     useAccessStore.getState().fetch();
@@ -260,6 +314,11 @@ export function Home() {
 
   if (!useHasHydrated()) {
     return <Loading />;
+  }
+
+  // 锁屏逻辑
+  if (!isUnlocked) {
+    return LockScreen;
   }
 
   return (
